@@ -1,21 +1,24 @@
-import 'package:flutter/material.dart';
+import 'package:firebase/screens/login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import '../main.dart';
+import 'my_home_page.dart';
 
-import 'main.dart';
-
-class Login extends StatefulWidget {
-  final VoidCallback onClickedSignUp;
-  const Login({Key? key, required this.onClickedSignUp}) : super(key: key);
+class Register extends StatefulWidget {
+  final Function() onClickedSignIn;
+  const Register({Key? key, required this.onClickedSignIn}) : super(key: key);
 
   @override
-  State<Login> createState() => _LoginState();
+  State<Register> createState() => _RegisterState();
 }
 
-class _LoginState extends State<Login> {
-  final loginFormkey = GlobalKey<FormState>();
+class _RegisterState extends State<Register> {
+  final registerFormkey = GlobalKey<FormState>();
   final _email = TextEditingController();
 
   final _password = TextEditingController();
+
+  final _confirmpassword = TextEditingController();
 
   FirebaseAuth auth = FirebaseAuth.instance;
 
@@ -23,12 +26,13 @@ class _LoginState extends State<Login> {
   void dispose() {
     _email.dispose();
     _password.dispose();
+    _confirmpassword.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    void login() async {
+    register() async {
       showDialog(
           context: context,
           barrierDismissible: false,
@@ -36,14 +40,21 @@ class _LoginState extends State<Login> {
                 child: CircularProgressIndicator(),
               ));
       try {
-        await auth.signInWithEmailAndPassword(
+        await auth.createUserWithEmailAndPassword(
             email: _email.value.text, password: _password.value.text);
+
+        Navigator.of(context).pushNamed(
+          '/',
+          arguments: {},
+        );
       } on FirebaseAuthException catch (e) {
-        if (e.code == 'user-not-found') {
-          print('No user found for that email.');
-        } else if (e.code == 'wrong-password') {
-          print('Wrong password provided for that user.');
+        if (e.code == 'weak-password') {
+          print('The password provided is too weak.');
+        } else if (e.code == 'email-already-in-use') {
+          print('The account already exists for that email.');
         }
+      } catch (e) {
+        print(e);
       }
 
       navigatorKey.currentState!.popUntil((route) => route.isFirst);
@@ -54,14 +65,15 @@ class _LoginState extends State<Login> {
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Form(
-            key: loginFormkey,
+            key: registerFormkey,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                const Icon(
-                  Icons.access_alarm,
-                  size: 100,
+                const Text(
+                  "Create an account.",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 25),
                 ),
                 const SizedBox(
                   height: 35,
@@ -74,7 +86,7 @@ class _LoginState extends State<Login> {
                     ),
                     validator: (value) {
                       if (value!.isEmpty) {
-                        return 'Please enter you E-mail';
+                        return 'Please enter a E-mail';
                       }
                       return null;
                     }),
@@ -97,10 +109,26 @@ class _LoginState extends State<Login> {
                 const SizedBox(
                   height: 15,
                 ),
+                TextFormField(
+                    controller: _confirmpassword,
+                    obscureText: true,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Confirm Password',
+                    ),
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'Please confirm your Password';
+                      }
+                      return null;
+                    }),
+                const SizedBox(
+                  height: 15,
+                ),
                 GestureDetector(
                   onTap: () {
-                    if (loginFormkey.currentState!.validate()) {
-                      login();
+                    if (registerFormkey.currentState!.validate()) {
+                      register();
                     }
                   },
                   child: Container(
@@ -112,7 +140,7 @@ class _LoginState extends State<Login> {
                       color: Colors.lightBlue[500],
                     ),
                     child: const Center(
-                      child: Text('Log In'),
+                      child: Text('Sign Up'),
                     ),
                   ),
                 ),
@@ -121,15 +149,16 @@ class _LoginState extends State<Login> {
                 ),
                 TextButton(
                   onPressed: () {
-                    Navigator.of(context).pushNamed('/resetPassword');
+                    widget.onClickedSignIn();
+                    /* Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => Login()),
+                    );*/
                   },
-                  child: const Text("Forgot Password?"),
-                ),
-                TextButton(
-                  onPressed: () {
-                    widget.onClickedSignUp();
-                  },
-                  child: const Text("You Don't Have Any Account ?"),
+                  child: const Text(
+                    "You already have an acount ? Login here .",
+                    style: TextStyle(fontSize: 12),
+                  ),
                 ),
               ],
             ),

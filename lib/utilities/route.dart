@@ -1,10 +1,8 @@
-import 'package:firebase/forgot_password_page.dart';
-import 'package:firebase/main_page.dart';
-import 'package:firebase/my_home_page.dart';
-import 'package:firebase/login.dart';
-import 'package:firebase/register.dart';
+import 'package:firebase/screens/forgot_password_page.dart';
+import 'package:firebase/providers/main_page.dart';
+import 'package:firebase/screens/my_home_page.dart';
 import 'package:flutter/material.dart';
-import 'verify_email_page.dart';
+import '../screens/verify_email_page.dart';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
