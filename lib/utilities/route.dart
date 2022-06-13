@@ -14,7 +14,7 @@ class RouteGenerator {
         return MaterialPageRoute(
             builder: (context) => const ForgotPasswordPage());
       case '/verifyEmail':
-        return MaterialPageRoute(builder: (context) => const VerityEmailPage());
+        return MaterialPageRoute(builder: (context) => const VerifyEmailPage());
       /* case '/login':
         return MaterialPageRoute(builder: (context) => Login());
       case '/register':

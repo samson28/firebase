@@ -18,6 +18,11 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     super.dispose();
   }
 
+  void showSnack(message) {
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
+  }
+
   void resetPassword() async {
     showDialog(
         context: context,
@@ -27,9 +32,11 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
             ));
     try {
       await auth.sendPasswordResetEmail(email: _emailController.value.text);
+      showSnack("Password Reset Email Sent");
       Navigator.of(context).popUntil((route) => route.isFirst);
     } on FirebaseAuthException catch (e) {
       print(e);
+      showSnack(e.message);
       Navigator.of(context).pop();
     }
   }
@@ -74,7 +81,8 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
               ),
               GestureDetector(
                 onTap: () {
-                  Navigator.of(context).pushNamed('/verifyEmail');
+                  resetPassword();
+                  /*Navigator.of(context).pushNamed('/verifyEmail');*/
                 },
                 child: Container(
                   height: 50.0,

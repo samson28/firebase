@@ -3,14 +3,14 @@ import 'package:firebase/screens/my_home_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class VerityEmailPage extends StatefulWidget {
-  const VerityEmailPage({Key? key}) : super(key: key);
+class VerifyEmailPage extends StatefulWidget {
+  const VerifyEmailPage({Key? key}) : super(key: key);
 
   @override
-  State<VerityEmailPage> createState() => _VerityEmailPageState();
+  State<VerifyEmailPage> createState() => _VerifyEmailPageState();
 }
 
-class _VerityEmailPageState extends State<VerityEmailPage> {
+class _VerifyEmailPageState extends State<VerifyEmailPage> {
   bool isEmailVerify = false;
   bool canResendEmail = false;
   Timer? timer;
